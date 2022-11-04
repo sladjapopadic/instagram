@@ -46,11 +46,11 @@ public class JwtService {
     }
 
     public Authentication getAuthentication(String token) {
-        User user = userRepository.findByUsernameIgnoreCase(getUsername(token));
+        User user = userRepository.findByUsernameIgnoreCase(getTokenSubject(token));
         return new UsernamePasswordAuthenticationToken(user, "");
     }
 
-    public String getUsername(String token) {
+    public String getTokenSubject(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
     }
 

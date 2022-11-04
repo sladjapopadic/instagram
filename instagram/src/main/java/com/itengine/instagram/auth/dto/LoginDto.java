@@ -1,4 +1,4 @@
-package com.itengine.instagram.auth.model;
+package com.itengine.instagram.auth.dto;
 
 public class LoginDto {
 

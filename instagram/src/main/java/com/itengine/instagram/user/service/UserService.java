@@ -1,6 +1,6 @@
 package com.itengine.instagram.user.service;
 
-import com.itengine.instagram.auth.model.RegistrationRequestDto;
+import com.itengine.instagram.auth.dto.RegistrationRequestDto;
 import com.itengine.instagram.user.model.User;
 import com.itengine.instagram.user.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -41,7 +41,19 @@ public class UserService implements UserDetailsService {
         return user.isActive();
     }
 
-    public boolean exists(String username) {
+    public boolean existsByUsername(String username) {
         return userRepository.existsByUsernameIgnoreCase(username);
+    }
+
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmailIgnoreCase(email);
+    }
+
+    public User findByEmail(String email) {
+        return userRepository.findByEmailIgnoreCase(email);
+    }
+
+    public void saveUser(User user) {
+        userRepository.save(user);
     }
 }

@@ -1,10 +1,10 @@
-package com.itengine.instagram.auth.model;
+package com.itengine.instagram.auth.dto;
 
-public class ConfirmationRequestDto {
+public class RegistrationRequestDto {
 
     private String username;
     private String password;
-    private String token;
+    private String email;
 
     public String getUsername() {
         return username;
@@ -22,11 +22,11 @@ public class ConfirmationRequestDto {
         this.password = password;
     }
 
-    public String getToken() {
-        return token;
+    public String getEmail() {
+        return email;
     }
 
-    public void setToken(String token) {
-        this.token = token;
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

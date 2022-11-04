@@ -1,6 +1,6 @@
 package com.itengine.instagram.auth.controller;
 
-import com.itengine.instagram.auth.model.*;
+import com.itengine.instagram.auth.dto.*;
 import com.itengine.instagram.auth.service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +18,7 @@ public class AuthController {
 
     @PostMapping("/register")
     public ResponseEntity<RegistrationResponseDto> register(@RequestBody RegistrationRequestDto registrationRequestDto) {
-        return new ResponseEntity<>(authService.register(registrationRequestDto), HttpStatus.CREATED);
+        return new ResponseEntity<>(authService.register(registrationRequestDto), HttpStatus.OK);
     }
 
     @PatchMapping("/confirm")
@@ -29,5 +29,17 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
         return new ResponseEntity<>(authService.login(loginDto), HttpStatus.OK);
+    }
+
+    @PostMapping("/forgotPassword")
+    public ResponseEntity<Void> sendResetPasswordMail(@RequestBody String email) {
+        authService.sendResetPasswordMail(email);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @PostMapping("/resetPassword")
+    public ResponseEntity<Void> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
+        authService.resetPassword(resetPasswordDto);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

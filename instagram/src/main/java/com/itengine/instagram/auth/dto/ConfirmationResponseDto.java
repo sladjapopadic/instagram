@@ -1,4 +1,4 @@
-package com.itengine.instagram.auth.model;
+package com.itengine.instagram.auth.dto;
 
 import com.itengine.instagram.auth.enums.ConfirmRegistrationResult;
 
