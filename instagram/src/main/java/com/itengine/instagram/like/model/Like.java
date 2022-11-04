@@ -1,6 +1,6 @@
 package com.itengine.instagram.like.model;
 
-import com.itengine.instagram.comment.model.model.Post;
+import com.itengine.instagram.post.model.Post;
 import com.itengine.instagram.user.model.User;
 
 import javax.persistence.*;

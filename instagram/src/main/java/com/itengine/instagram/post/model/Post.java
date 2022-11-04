@@ -1,4 +1,4 @@
-package com.itengine.instagram.comment.model.model;
+package com.itengine.instagram.post.model;
 
 import com.itengine.instagram.user.model.User;
 

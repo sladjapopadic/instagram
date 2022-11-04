@@ -1,7 +1,7 @@
 package com.itengine.instagram.user.model;
 
-import com.itengine.instagram.comment.model.model.Post;
 import com.itengine.instagram.followers.model.Followers;
+import com.itengine.instagram.post.model.Post;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -27,7 +27,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "following")
     private List<Followers> following;
 
-    @Column(name = "username", nullable = false)
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @Column(name = "password", nullable = false)
@@ -41,6 +41,32 @@ public class User implements UserDetails {
 
     @Column(name = "image")
     private byte[] image;
+
+    @Column(name = "active")
+    private boolean active;
+
+    public User() {
+
+    }
+
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    @PrePersist
+    public void prePersist() {
+        this.username = username.toLowerCase().trim();
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -76,4 +102,10 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+
 }

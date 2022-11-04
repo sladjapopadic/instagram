@@ -14,13 +14,12 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Date;
 
-
 @Component
 public class JwtService {
 
-    private JwtConfiguration jwtConfiguration;
-    private UserRepository userRepository;
-    private String secretKey;
+    private final JwtConfiguration jwtConfiguration;
+    private final UserRepository userRepository;
+    private final String secretKey;
 
     public JwtService(JwtConfiguration jwtConfiguration, UserRepository userRepository) {
         this.jwtConfiguration = jwtConfiguration;
@@ -28,10 +27,12 @@ public class JwtService {
         secretKey = jwtConfiguration.getSecretKey();
     }
 
-    public String createToken(User user) {
-        Claims claims = Jwts.claims().setSubject(user.getUsername());
+    public String createToken(String username) {
+        Claims claims = Jwts.claims().setSubject(username);
         Date now = new Date();
-        Date validity = new Date(now.getTime() + (1000 * 60 * 60 * jwtConfiguration.getValidityInHours()));
+        int validityInHours = jwtConfiguration.getValidityInHours();
+        Date validity = new Date(now.getTime() + convertToMilliseconds(validityInHours));
+
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -40,17 +41,17 @@ public class JwtService {
                 .compact();
     }
 
+    private long convertToMilliseconds(int hours) {
+        return 1000L * 60 * 60 * hours;
+    }
+
     public Authentication getAuthentication(String token) {
-        User user = userRepository.findByUsernameIgnoreCase(getUsername(token));
+        User user = userRepository.findByUsernameIgnoreCase(getTokenSubject(token));
         return new UsernamePasswordAuthenticationToken(user, "");
     }
 
-    public String getUsername(String token) {
+    public String getTokenSubject(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
-    }
-
-    public Claims extractAllClaims(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
     public String resolveToken(HttpServletRequest req) {
@@ -62,7 +63,12 @@ public class JwtService {
     }
 
     public boolean isValid(String token) {
-        Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
-        return !claims.getBody().getExpiration().before(new Date());
+        try {
+            Jws<Claims> claims = Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token);
+            return !claims.getBody().getExpiration().before(new Date());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

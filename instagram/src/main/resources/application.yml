@@ -6,7 +6,20 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: instg.noreply@gmail.com
+    password: efslqepbsqurzxrl
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 jwt:
   secret-key: secret
   validity-in-hours: 24
+
+
