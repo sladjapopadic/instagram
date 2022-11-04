@@ -1,7 +1,7 @@
 package com.itengine.instagram.user.dto;
 
 import com.itengine.instagram.followers.model.Followers;
-import com.itengine.instagram.comment.model.model.Post;
+import com.itengine.instagram.post.model.Post;
 
 import java.util.List;
 

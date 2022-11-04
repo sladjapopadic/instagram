@@ -1,5 +1,6 @@
 package com.itengine.instagram.security;
 
+import com.itengine.instagram.config.BeanConfiguration;
 import com.itengine.instagram.security.jwt.JwtService;
 import com.itengine.instagram.security.jwt.configuration.JwtConfigurer;
 import org.springframework.context.annotation.Bean;
@@ -27,12 +28,14 @@ import java.util.Collections;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
-    private UserDetailsService userDetailsService;
-    private JwtService jwtService;
+    private final UserDetailsService userDetailsService;
+    private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
 
-    public SecurityConfiguration(UserDetailsService userDetailsService, JwtService jwtService) {
+    public SecurityConfiguration(UserDetailsService userDetailsService, JwtService jwtService, PasswordEncoder passwordEncoder) {
         this.userDetailsService = userDetailsService;
         this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -44,7 +47,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and()
+                .cors()
+                .and()
                 .httpBasic().disable()
                 .csrf().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
@@ -75,15 +79,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder getPasswordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
     public DaoAuthenticationProvider authProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userDetailsService);
-        authProvider.setPasswordEncoder(getPasswordEncoder());
+        authProvider.setPasswordEncoder(passwordEncoder);
         return authProvider;
     }
 }
