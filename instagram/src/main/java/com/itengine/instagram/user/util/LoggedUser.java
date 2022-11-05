@@ -5,7 +5,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 public class LoggedUser {
 
-    private static User getUser() {
+    public static User getUser() {
         return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     }
 

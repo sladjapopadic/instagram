@@ -2,6 +2,7 @@ package com.itengine.instagram.user.service;
 
 import com.itengine.instagram.auth.dto.RegistrationRequestDto;
 import com.itengine.instagram.email.util.MailValidator;
+import com.itengine.instagram.follow.model.Follow;
 import com.itengine.instagram.user.dto.UpdateDto;
 import com.itengine.instagram.user.model.User;
 import com.itengine.instagram.user.repository.UserRepository;
@@ -13,6 +14,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -91,5 +95,17 @@ public class UserService implements UserDetailsService {
     public void delete() {
         Long id = LoggedUser.getId();
         userRepository.deleteById(id);
+    }
+
+    public List<User> getFollowedUsers(Long userId) {
+        User user = userRepository.getById(userId);
+
+        List<User> followedUsers = new ArrayList<>();
+
+        for (Follow follow : user.getFollowing()) {
+            followedUsers.add(follow.getFollowTo());
+        }
+
+        return followedUsers;
     }
 }
