@@ -1,8 +1,13 @@
 package com.itengine.instagram.user.service;
 
 import com.itengine.instagram.auth.dto.RegistrationRequestDto;
+import com.itengine.instagram.email.util.MailValidator;
+import com.itengine.instagram.user.dto.UpdateDto;
 import com.itengine.instagram.user.model.User;
 import com.itengine.instagram.user.repository.UserRepository;
+import com.itengine.instagram.user.util.LoggedUser;
+import com.itengine.instagram.util.CredentialRegex;
+import com.itengine.instagram.util.CredentialValidation;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -30,10 +35,10 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void activate(String username) {
+    public User activate(String username) {
         User user = userRepository.findByUsernameIgnoreCase(username);
         user.setActive(true);
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public boolean isActive(String username) {
@@ -54,6 +59,32 @@ public class UserService implements UserDetailsService {
     }
 
     public void saveUser(User user) {
+        userRepository.save(user);
+    }
+
+    public User findByUsername(String username) {
+        return userRepository.findByUsernameIgnoreCase(username);
+    }
+
+    public void updateAccount(UpdateDto updateDto) {
+        if(!MailValidator.isValid(updateDto.getEmail())) {
+            return;
+        }
+
+        if(!CredentialValidation.isPatternMatched(CredentialRegex.USERNAME_REGEX, updateDto.getUsername())) {
+            return;
+        }
+
+        if(!CredentialValidation.isPatternMatched(CredentialRegex.PASSWORD_REGEX, updateDto.getPassword())) {
+            return;
+        }
+
+        String username = LoggedUser.getUsername();
+        User user = userRepository.findByUsernameIgnoreCase(username);
+        user.setEmail(updateDto.getEmail());
+        user.setUsername(updateDto.getUsername());
+        user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
+
         userRepository.save(user);
     }
 }

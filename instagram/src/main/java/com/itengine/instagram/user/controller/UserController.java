@@ -1,15 +1,23 @@
 package com.itengine.instagram.user.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.itengine.instagram.user.dto.UpdateDto;
+import com.itengine.instagram.user.service.UserService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    @GetMapping
-    public String test() {
-        return "working";
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Void> updateAccount(@RequestBody UpdateDto updateDto) {
+        userService.updateAccount(updateDto);
+        return null;
     }
 }

@@ -12,7 +12,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Optional;
 
 @Component
 public class JwtService {
@@ -20,6 +22,7 @@ public class JwtService {
     private final JwtConfiguration jwtConfiguration;
     private final UserRepository userRepository;
     private final String secretKey;
+    private static final String USER_ID_KEY = "userId";
 
     public JwtService(JwtConfiguration jwtConfiguration, UserRepository userRepository) {
         this.jwtConfiguration = jwtConfiguration;
@@ -28,7 +31,12 @@ public class JwtService {
     }
 
     public String createToken(String username) {
+       return createToken(username, null);
+    }
+
+    public String createToken(String username, Long userId) {
         Claims claims = Jwts.claims().setSubject(username);
+        claims.put(USER_ID_KEY, userId);
         Date now = new Date();
         int validityInHours = jwtConfiguration.getValidityInHours();
         Date validity = new Date(now.getTime() + convertToMilliseconds(validityInHours));
@@ -46,12 +54,23 @@ public class JwtService {
     }
 
     public Authentication getAuthentication(String token) {
-        User user = userRepository.findByUsernameIgnoreCase(getTokenSubject(token));
-        return new UsernamePasswordAuthenticationToken(user, "");
+        Long userId = getTokenUserId(token);
+        Optional<User> user = userRepository.findById(userId);
+
+        if (user.isEmpty()) {
+            return new UsernamePasswordAuthenticationToken(null, "", new ArrayList<>());
+        }
+
+        return new UsernamePasswordAuthenticationToken(user.get(), "", new ArrayList<>());
     }
 
     public String getTokenSubject(String token) {
         return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+    }
+
+    public Long getTokenUserId(String token) {
+        Integer userId = (Integer) Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(USER_ID_KEY);
+        return Long.valueOf(userId);
     }
 
     public String resolveToken(HttpServletRequest req) {
