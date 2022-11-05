@@ -67,15 +67,15 @@ public class UserService implements UserDetailsService {
     }
 
     public void updateAccount(UpdateDto updateDto) {
-        if(!MailValidator.isValid(updateDto.getEmail())) {
+        if (!MailValidator.isValid(updateDto.getEmail())) {
             return;
         }
 
-        if(!CredentialValidation.isPatternMatched(CredentialRegex.USERNAME_REGEX, updateDto.getUsername())) {
+        if (!CredentialValidation.isPatternMatched(CredentialRegex.USERNAME_REGEX, updateDto.getUsername())) {
             return;
         }
 
-        if(!CredentialValidation.isPatternMatched(CredentialRegex.PASSWORD_REGEX, updateDto.getPassword())) {
+        if (!CredentialValidation.isPatternMatched(CredentialRegex.PASSWORD_REGEX, updateDto.getPassword())) {
             return;
         }
 
@@ -86,5 +86,10 @@ public class UserService implements UserDetailsService {
         user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
 
         userRepository.save(user);
+    }
+
+    public void delete() {
+        Long id = LoggedUser.getId();
+        userRepository.deleteById(id);
     }
 }
