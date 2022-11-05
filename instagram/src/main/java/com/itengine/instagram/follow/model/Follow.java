@@ -20,6 +20,15 @@ public class Follow {
     @JoinColumn(name = "follow_to", nullable = false)
     private User followTo;
 
+    public Follow() {
+
+    }
+
+    public Follow(User followFrom, User followTo) {
+        this.followFrom = followFrom;
+        this.followTo = followTo;
+    }
+
     public User getFollowFrom() {
         return followFrom;
     }

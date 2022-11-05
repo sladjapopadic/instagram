@@ -3,10 +3,15 @@ package com.itengine.instagram.user.service;
 import com.itengine.instagram.auth.dto.RegistrationRequestDto;
 import com.itengine.instagram.email.util.MailValidator;
 import com.itengine.instagram.follow.model.Follow;
-import com.itengine.instagram.user.dto.UpdateDto;
+import com.itengine.instagram.follow.service.FollowService;
+import com.itengine.instagram.post.util.PostConverter;
+import com.itengine.instagram.user.dto.UserFollowDto;
+import com.itengine.instagram.user.dto.UserResponseDto;
+import com.itengine.instagram.user.dto.UserUpdateDto;
 import com.itengine.instagram.user.model.User;
 import com.itengine.instagram.user.repository.UserRepository;
 import com.itengine.instagram.user.util.LoggedUser;
+import com.itengine.instagram.user.util.UserConverter;
 import com.itengine.instagram.util.CredentialRegex;
 import com.itengine.instagram.util.CredentialValidation;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -23,10 +28,16 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final PostConverter postConverter;
+    private final UserConverter userConverter;
+    private final FollowService followService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, PostConverter postConverter, UserConverter userConverter, FollowService followService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.postConverter = postConverter;
+        this.userConverter = userConverter;
+        this.followService = followService;
     }
 
     @Override
@@ -70,24 +81,24 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsernameIgnoreCase(username);
     }
 
-    public void updateAccount(UpdateDto updateDto) {
-        if (!MailValidator.isValid(updateDto.getEmail())) {
+    public void updateAccount(UserUpdateDto userUpdateDto) {
+        if (!MailValidator.isValid(userUpdateDto.getEmail())) {
             return;
         }
 
-        if (!CredentialValidation.isPatternMatched(CredentialRegex.USERNAME_REGEX, updateDto.getUsername())) {
+        if (!CredentialValidation.isPatternMatched(CredentialRegex.USERNAME_REGEX, userUpdateDto.getUsername())) {
             return;
         }
 
-        if (!CredentialValidation.isPatternMatched(CredentialRegex.PASSWORD_REGEX, updateDto.getPassword())) {
+        if (!CredentialValidation.isPatternMatched(CredentialRegex.PASSWORD_REGEX, userUpdateDto.getPassword())) {
             return;
         }
 
         String username = LoggedUser.getUsername();
         User user = userRepository.findByUsernameIgnoreCase(username);
-        user.setEmail(updateDto.getEmail());
-        user.setUsername(updateDto.getUsername());
-        user.setPassword(passwordEncoder.encode(updateDto.getPassword()));
+        user.setEmail(userUpdateDto.getEmail());
+        user.setUsername(userUpdateDto.getUsername());
+        user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
 
         userRepository.save(user);
     }
@@ -107,5 +118,44 @@ public class UserService implements UserDetailsService {
         }
 
         return followedUsers;
+    }
+
+    public List<UserFollowDto> getFollowedDtoUsers(Long userId) {
+        return userConverter.convertToUserFollowerDtos(getFollowedUsers(userId));
+    }
+
+    public UserResponseDto getProfile(Long userId) {
+        User user = userRepository.getById(userId);
+
+        UserResponseDto userResponseDto = new UserResponseDto();
+        userResponseDto.setImage(user.getImage());
+        userResponseDto.setUsername(user.getUsername());
+        userResponseDto.setDescription(user.getDescription());
+        userResponseDto.setPosts(postConverter.convertToPostDtos(user.getPosts()));
+        userResponseDto.setNumberOfFollowing(user.getFollowing().size());
+        userResponseDto.setNumberOfFollowers(user.getFollowers().size());
+
+        return userResponseDto;
+    }
+
+    public List<UserFollowDto> getFollowers(Long userId) {
+        User user = userRepository.getById(userId);
+        List<User> following = new ArrayList<>();
+
+        for (Follow follow : user.getFollowers()) {
+            following.add(follow.getFollowFrom());
+        }
+
+        return userConverter.convertToUserFollowerDtos(following);
+    }
+
+    public void follow(Long userId) {
+        User userToFollow = userRepository.getById(userId);
+        followService.createFollow(LoggedUser.getUser(), userToFollow);
+    }
+
+    public void unfollow(Long userId) {
+        User userToUnfollow = userRepository.getById(userId);
+        followService.removeFollow(LoggedUser.getUser(), userToUnfollow);
     }
 }

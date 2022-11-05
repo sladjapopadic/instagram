@@ -142,4 +142,8 @@ public class User implements UserDetails {
     public void setImage(byte[] image) {
         this.image = image;
     }
+
+    public String getDescription() {
+        return description;
+    }
 }
