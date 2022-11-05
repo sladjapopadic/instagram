@@ -8,12 +8,11 @@ import com.itengine.instagram.email.util.MailValidator;
 import com.itengine.instagram.security.jwt.JwtService;
 import com.itengine.instagram.user.model.User;
 import com.itengine.instagram.user.service.UserService;
+import com.itengine.instagram.util.CredentialRegex;
+import com.itengine.instagram.util.CredentialValidation;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Service
 public class AuthService {
@@ -22,8 +21,6 @@ public class AuthService {
     private final JwtService jwtService;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
-    private static final String USERNAME_REGEX = "^[a-z\\d_.-]+$";
-    private static final String PASSWORD_REGEX = "^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?\\d)(?=.*?[#?!@$%^&*-.,]).{8,}$";
 
     public AuthService(UserService userService, JwtService jwtService, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userService = userService;
@@ -34,11 +31,11 @@ public class AuthService {
 
     public RegistrationResponseDto register(RegistrationRequestDto registrationRequestDto) {
 
-        if (!isPatternMatched(PASSWORD_REGEX, registrationRequestDto.getPassword())) {
+        if (!CredentialValidation.isPatternMatched(CredentialRegex.PASSWORD_REGEX, registrationRequestDto.getPassword())) {
             return new RegistrationResponseDto(RegistrationResult.INVALID_PASSWORD);
         }
 
-        if (!isPatternMatched(USERNAME_REGEX, registrationRequestDto.getUsername())) {
+        if (!CredentialValidation.isPatternMatched(CredentialRegex.USERNAME_REGEX, registrationRequestDto.getUsername())) {
             return new RegistrationResponseDto(RegistrationResult.INVALID_USERNAME);
         }
 
@@ -62,12 +59,6 @@ public class AuthService {
         return new RegistrationResponseDto(RegistrationResult.SUCCESS);
     }
 
-    private boolean isPatternMatched(String regex, String valueToMatch) {
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(valueToMatch);
-        return matcher.matches();
-    }
-
     public ConfirmationResponseDto confirmRegistration(ConfirmationRequestDto confirmationRequestDto) {
 
         if (!jwtService.isValid(confirmationRequestDto.getToken())) {
@@ -82,8 +73,8 @@ public class AuthService {
             return new ConfirmationResponseDto(ConfirmRegistrationResult.ALREADY_CONFIRMED);
         }
 
-        userService.activate(confirmationRequestDto.getUsername());
-        return new ConfirmationResponseDto(ConfirmRegistrationResult.SUCCESS, jwtService.createToken(confirmationRequestDto.getUsername()));
+        User user = userService.activate(confirmationRequestDto.getUsername());
+        return new ConfirmationResponseDto(ConfirmRegistrationResult.SUCCESS, jwtService.createToken(confirmationRequestDto.getUsername(), user.getId()));
     }
 
     public String login(LoginDto loginDto) {
@@ -95,7 +86,8 @@ public class AuthService {
             return null;
         }
 
-        return jwtService.createToken(loginDto.getUsername());
+        User user = userService.findByUsername(loginDto.getUsername());
+        return jwtService.createToken(loginDto.getUsername(), user.getId());
     }
 
     private boolean areCredentialsValid(String username, String password) {
@@ -127,7 +119,7 @@ public class AuthService {
             return;
         }
 
-        if(!isPatternMatched(PASSWORD_REGEX, resetPasswordDto.getNewPassword())) {
+        if(!CredentialValidation.isPatternMatched(CredentialRegex.PASSWORD_REGEX, resetPasswordDto.getNewPassword())) {
             return;
         }
 

@@ -107,5 +107,19 @@ public class User implements UserDetails {
         this.password = password;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Long getId() {
+        return id;
+    }
 }
