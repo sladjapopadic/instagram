@@ -5,7 +5,7 @@ import com.itengine.instagram.post.model.Post;
 
 import java.util.List;
 
-public class UserDto {
+public class UserRequestDto {
 
     private List<Post> posts;
     private List<Follow> followers;

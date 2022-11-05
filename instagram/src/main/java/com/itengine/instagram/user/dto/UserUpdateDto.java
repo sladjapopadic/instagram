@@ -1,6 +1,6 @@
 package com.itengine.instagram.user.dto;
 
-public class UpdateDto {
+public class UserUpdateDto {
 
     private String username;
     private String password;

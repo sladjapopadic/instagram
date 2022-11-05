@@ -3,8 +3,10 @@ package com.itengine.instagram.post.controller;
 import com.itengine.instagram.post.dto.PostDto;
 import com.itengine.instagram.post.model.Post;
 import com.itengine.instagram.post.service.PostService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -22,7 +24,6 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostDto>> getFollowedUsersPosts() {
-        postService.getFollowedUsersPosts();
-        return null;
+       return new ResponseEntity<>(postService.getFollowedUsersPosts(), HttpStatus.OK);
     }
 }
