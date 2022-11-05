@@ -1,12 +1,19 @@
 package com.itengine.instagram.user.util;
 
-import org.springframework.security.core.Authentication;
+import com.itengine.instagram.user.model.User;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 public class LoggedUser {
 
+    private static User getUser() {
+        return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+    }
+
     public static String getUsername() {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        return auth.getName();
+        return getUser().getUsername();
+    }
+
+    public static Long getId() {
+        return getUser().getId();
     }
 }
