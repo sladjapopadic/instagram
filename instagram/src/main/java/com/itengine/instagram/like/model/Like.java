@@ -21,4 +21,12 @@ public class Like {
     @ManyToOne
     @JoinColumn(name = "post_id", nullable = false)
     private Post post;
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public void setPost(Post post) {
+        this.post = post;
+    }
 }
