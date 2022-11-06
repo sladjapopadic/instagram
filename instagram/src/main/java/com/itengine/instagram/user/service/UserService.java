@@ -21,7 +21,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserService implements UserDetailsService {
@@ -157,5 +159,17 @@ public class UserService implements UserDetailsService {
     public void unfollow(Long userId) {
         User userToUnfollow = userRepository.getById(userId);
         followService.removeFollow(LoggedUser.getUser(), userToUnfollow);
+    }
+
+    public List<UserFollowDto> discover() {
+
+        List<Follow> suggestions = followService.getSuggestions(LoggedUser.getId());
+        Set<User> users = new HashSet<>();
+
+        for (Follow follow : suggestions) {
+            users.add(follow.getFollowTo());
+        }
+
+        return userConverter.convertToUserFollowerDtos(new ArrayList<>(users));
     }
 }

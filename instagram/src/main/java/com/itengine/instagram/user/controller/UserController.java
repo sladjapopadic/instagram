@@ -58,4 +58,9 @@ public class UserController {
         userService.unfollow(userId);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/discover")
+    public ResponseEntity<List<UserFollowDto>> discover() {
+        return new ResponseEntity<>(userService.discover(), HttpStatus.OK);
+    }
 }

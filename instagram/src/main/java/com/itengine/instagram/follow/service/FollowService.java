@@ -5,6 +5,8 @@ import com.itengine.instagram.follow.repository.FollowRepository;
 import com.itengine.instagram.user.model.User;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FollowService {
 
@@ -26,5 +28,9 @@ public class FollowService {
 
     public void removeFollow(User followFrom, User followTo) {
         followRepository.deleteByFollowFromAndFollowTo(followFrom, followTo);
+    }
+
+    public List<Follow> getSuggestions(Long userId) {
+        return followRepository.findSuggestions(userId);
     }
 }
