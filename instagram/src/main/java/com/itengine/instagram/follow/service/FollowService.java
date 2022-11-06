@@ -33,4 +33,8 @@ public class FollowService {
     public List<Follow> getSuggestions(Long userId) {
         return followRepository.findSuggestions(userId);
     }
+
+    public void delete(Long userId) {
+        followRepository.deleteByFollowFromIdOrFollowToId(userId, userId);
+    }
 }

@@ -5,7 +5,7 @@ import com.itengine.instagram.email.util.MailValidator;
 import com.itengine.instagram.follow.model.Follow;
 import com.itengine.instagram.follow.service.FollowService;
 import com.itengine.instagram.post.util.PostConverter;
-import com.itengine.instagram.user.dto.UserFollowDto;
+import com.itengine.instagram.user.dto.UserProfileDto;
 import com.itengine.instagram.user.dto.UserResponseDto;
 import com.itengine.instagram.user.dto.UserUpdateDto;
 import com.itengine.instagram.user.model.User;
@@ -105,11 +105,6 @@ public class UserService implements UserDetailsService {
         userRepository.save(user);
     }
 
-    public void delete() {
-        Long id = LoggedUser.getId();
-        userRepository.deleteById(id);
-    }
-
     public List<User> getFollowedUsers(Long userId) {
         User user = userRepository.getById(userId);
 
@@ -122,8 +117,8 @@ public class UserService implements UserDetailsService {
         return followedUsers;
     }
 
-    public List<UserFollowDto> getFollowedDtoUsers(Long userId) {
-        return userConverter.convertToUserFollowerDtos(getFollowedUsers(userId));
+    public List<UserProfileDto> getFollowedDtoUsers(Long userId) {
+        return userConverter.convertToUserProfileDtos(getFollowedUsers(userId));
     }
 
     public UserResponseDto getProfile(Long userId) {
@@ -133,14 +128,14 @@ public class UserService implements UserDetailsService {
         userResponseDto.setImage(user.getImage());
         userResponseDto.setUsername(user.getUsername());
         userResponseDto.setDescription(user.getDescription());
-        userResponseDto.setPosts(postConverter.convertToPostDtos(user.getPosts()));
+        userResponseDto.setPosts(postConverter.convertToSortedPostDtos(user.getPosts()));
         userResponseDto.setNumberOfFollowing(user.getFollowing().size());
         userResponseDto.setNumberOfFollowers(user.getFollowers().size());
 
         return userResponseDto;
     }
 
-    public List<UserFollowDto> getFollowers(Long userId) {
+    public List<UserProfileDto> getFollowers(Long userId) {
         User user = userRepository.getById(userId);
         List<User> following = new ArrayList<>();
 
@@ -148,10 +143,15 @@ public class UserService implements UserDetailsService {
             following.add(follow.getFollowFrom());
         }
 
-        return userConverter.convertToUserFollowerDtos(following);
+        return userConverter.convertToUserProfileDtos(following);
     }
 
     public void follow(Long userId) {
+
+        if (userId.equals(LoggedUser.getId())) {
+            return;
+        }
+
         User userToFollow = userRepository.getById(userId);
         followService.createFollow(LoggedUser.getUser(), userToFollow);
     }
@@ -161,7 +161,7 @@ public class UserService implements UserDetailsService {
         followService.removeFollow(LoggedUser.getUser(), userToUnfollow);
     }
 
-    public List<UserFollowDto> discover() {
+    public List<UserProfileDto> discover() {
 
         List<Follow> suggestions = followService.getSuggestions(LoggedUser.getId());
         Set<User> users = new HashSet<>();
@@ -170,6 +170,13 @@ public class UserService implements UserDetailsService {
             users.add(follow.getFollowTo());
         }
 
-        return userConverter.convertToUserFollowerDtos(new ArrayList<>(users));
+        return userConverter.convertToUserProfileDtos(new ArrayList<>(users));
+    }
+
+    public List<UserProfileDto> search(String username) {
+
+        List<User> searchResult = userRepository.findByUsernameIgnoreCaseContaining(username.toLowerCase());
+
+        return userConverter.convertToUserProfileDtos(searchResult);
     }
 }

@@ -6,6 +6,7 @@ import com.itengine.instagram.post.model.Post;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Component
@@ -17,7 +18,7 @@ public class PostConverter {
         this.commentConverter = commentConverter;
     }
 
-    public PostDto convertToPostDto(Post post) {
+    private PostDto convertToPostDto(Post post) {
 
         PostDto postDto = new PostDto();
 
@@ -32,7 +33,9 @@ public class PostConverter {
         return postDto;
     }
 
-    public List<PostDto> convertToPostDtos(List<Post> posts) {
+    public List<PostDto> convertToSortedPostDtos(List<Post> posts) {
+        posts.sort(Comparator.comparing(Post::getCreatedAt).reversed());
+
         List<PostDto> postDtos = new ArrayList<>();
 
         for(Post post : posts) {

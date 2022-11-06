@@ -26,4 +26,8 @@ public class LikeService {
        like.setUser(LoggedUser.getUser());
        likeRepository.save(like);
     }
+
+    public void delete(Long userId) {
+        likeRepository.deleteByUserId(userId);
+    }
 }

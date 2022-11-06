@@ -43,4 +43,8 @@ public class CommentService {
         comment.setComment(parentComment);
         commentRepository.save(comment);
     }
+
+    public void delete(Long userId) {
+        commentRepository.deleteByUserId(userId);
+    }
 }
