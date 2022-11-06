@@ -1,6 +1,6 @@
 package com.itengine.instagram.user.util;
 
-import com.itengine.instagram.user.dto.UserFollowDto;
+import com.itengine.instagram.user.dto.UserProfileDto;
 import com.itengine.instagram.user.model.User;
 import org.springframework.stereotype.Component;
 
@@ -10,23 +10,23 @@ import java.util.List;
 @Component
 public class UserConverter {
 
-    public UserFollowDto convertToUserFollowerDto(User user) {
+    public UserProfileDto convertToUserProfileDto(User user) {
 
-        UserFollowDto userFollowDto = new UserFollowDto();
+        UserProfileDto userProfileDto = new UserProfileDto();
 
-        userFollowDto.setUsername(user.getUsername());
-        userFollowDto.setImage(user.getImage());
+        userProfileDto.setUsername(user.getUsername());
+        userProfileDto.setImage(user.getImage());
 
-        return userFollowDto;
+        return userProfileDto;
     }
 
-    public List<UserFollowDto> convertToUserFollowerDtos(List<User> users) {
-        List<UserFollowDto> userFollowDtos = new ArrayList<>();
+    public List<UserProfileDto> convertToUserProfileDtos(List<User> users) {
+        List<UserProfileDto> userProfileDtos = new ArrayList<>();
 
         for (User user : users) {
-            userFollowDtos.add(convertToUserFollowerDto(user));
+            userProfileDtos.add(convertToUserProfileDto(user));
         }
 
-        return userFollowDtos;
+        return userProfileDtos;
     }
 }

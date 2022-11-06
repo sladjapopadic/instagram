@@ -13,6 +13,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     void deleteByFollowFromAndFollowTo(User followFrom, User followTo);
 
+    void deleteByFollowFromIdOrFollowToId(Long followFrom, Long followTo);
+
     @Query("SELECT follow FROM Follow follow " +
             "WHERE follow.followFrom IN ( " +
             "SELECT follow.followTo FROM follow " +

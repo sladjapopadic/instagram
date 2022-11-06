@@ -1,8 +1,9 @@
 package com.itengine.instagram.user.controller;
 
-import com.itengine.instagram.user.dto.UserFollowDto;
+import com.itengine.instagram.user.dto.UserProfileDto;
 import com.itengine.instagram.user.dto.UserResponseDto;
 import com.itengine.instagram.user.dto.UserUpdateDto;
+import com.itengine.instagram.user.service.UserDeleteService;
 import com.itengine.instagram.user.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,9 +16,11 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+    private final UserDeleteService userDeleteService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserDeleteService userDeleteService) {
         this.userService = userService;
+        this.userDeleteService = userDeleteService;
     }
 
     @PutMapping("/update")
@@ -28,7 +31,7 @@ public class UserController {
 
     @DeleteMapping("/delete")
     public ResponseEntity<Void> delete() {
-        userService.delete();
+        userDeleteService.delete();
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
@@ -38,12 +41,12 @@ public class UserController {
     }
 
     @GetMapping("/{userId}/followers")
-    public ResponseEntity<List<UserFollowDto>> getFollowers(@PathVariable Long userId) {
+    public ResponseEntity<List<UserProfileDto>> getFollowers(@PathVariable Long userId) {
         return new ResponseEntity<>(userService.getFollowers(userId), HttpStatus.OK);
     }
 
     @GetMapping("/{userId}/following")
-    public ResponseEntity<List<UserFollowDto>> getFollowedUsers(@PathVariable Long userId) {
+    public ResponseEntity<List<UserProfileDto>> getFollowedUsers(@PathVariable Long userId) {
         return new ResponseEntity<>(userService.getFollowedDtoUsers(userId), HttpStatus.OK);
     }
 
@@ -60,7 +63,12 @@ public class UserController {
     }
 
     @GetMapping("/discover")
-    public ResponseEntity<List<UserFollowDto>> discover() {
+    public ResponseEntity<List<UserProfileDto>> discover() {
         return new ResponseEntity<>(userService.discover(), HttpStatus.OK);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<UserProfileDto>> search(@RequestParam String username) {
+        return new ResponseEntity<>(userService.search(username), HttpStatus.OK);
     }
 }

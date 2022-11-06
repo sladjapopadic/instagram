@@ -5,6 +5,7 @@ import com.itengine.instagram.like.model.Like;
 import com.itengine.instagram.user.model.User;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -31,6 +32,17 @@ public class Post {
 
     @Column(name = "image", nullable = false)
     private byte[] image;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime dateCreated) {
+        this.createdAt = dateCreated;
+    }
 
     public User getUser() {
         return user;

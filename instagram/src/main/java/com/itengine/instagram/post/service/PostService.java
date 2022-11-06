@@ -8,7 +8,10 @@ import com.itengine.instagram.user.model.User;
 import com.itengine.instagram.user.service.UserService;
 import com.itengine.instagram.user.util.LoggedUser;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,14 +30,30 @@ public class PostService {
 
     public List<PostDto> getFollowedUsersPosts() {
         List<User> followedUsers = userService.getFollowedUsers(LoggedUser.getId());
-        List<PostDto> posts = new ArrayList<>();
+        List<Post> posts = new ArrayList<>();
+
         for (User user : followedUsers) {
-            posts.addAll(postConverter.convertToPostDtos(user.getPosts()));
+            posts.addAll(user.getPosts());
         }
-        return posts;
+
+        return postConverter.convertToSortedPostDtos(posts);
     }
 
     public Post getById(Long id) {
         return postRepository.getById(id);
+    }
+
+    public void delete(Long userId) {
+        postRepository.deleteByUserId(userId);
+    }
+
+    public void createPost(MultipartFile file, String caption) throws IOException {
+        Post post = new Post();
+        post.setCaption(caption);
+        post.setUser(LoggedUser.getUser());
+        post.setImage(file.getBytes());
+        post.setCreatedAt(LocalDateTime.now());
+
+        postRepository.save(post);
     }
 }

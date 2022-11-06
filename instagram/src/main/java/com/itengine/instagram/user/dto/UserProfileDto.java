@@ -1,6 +1,6 @@
 package com.itengine.instagram.user.dto;
 
-public class UserFollowDto {
+public class UserProfileDto {
 
     private String username;
     private byte[] image;
