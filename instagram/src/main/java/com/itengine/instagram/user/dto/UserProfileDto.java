@@ -3,14 +3,14 @@ package com.itengine.instagram.user.dto;
 public class UserProfileDto {
 
     private String username;
-    private byte[] image;
+    private Long userId;
 
-    public byte[] getImage() {
-        return image;
+    public Long getUserId() {
+        return userId;
     }
 
-    public void setImage(byte[] image) {
-        this.image = image;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public String getUsername() {

@@ -3,6 +3,7 @@ package com.itengine.instagram.comment.controller;
 import com.itengine.instagram.comment.dto.CommentRequestDto;
 import com.itengine.instagram.comment.dto.ReplyDto;
 import com.itengine.instagram.comment.service.CommentService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,12 +23,12 @@ public class CommentController {
     @PostMapping
     public ResponseEntity<Void> comment(@RequestBody CommentRequestDto commentRequestDto) {
         commentService.comment(commentRequestDto);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
     @PostMapping("/reply")
     public ResponseEntity<Void> reply(@RequestBody ReplyDto replyDto) {
         commentService.reply(replyDto);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }

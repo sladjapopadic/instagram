@@ -5,6 +5,7 @@ import com.itengine.instagram.user.model.User;
 import javax.persistence.*;
 
 @Entity
+@Table(name = "follow")
 public class Follow {
 
     @Id

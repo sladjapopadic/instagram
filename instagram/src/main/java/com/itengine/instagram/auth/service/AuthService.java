@@ -3,13 +3,15 @@ package com.itengine.instagram.auth.service;
 import com.itengine.instagram.auth.dto.*;
 import com.itengine.instagram.auth.enums.ConfirmRegistrationResult;
 import com.itengine.instagram.auth.enums.RegistrationResult;
+import com.itengine.instagram.auth.enums.ResetPasswordResult;
 import com.itengine.instagram.email.service.EmailService;
 import com.itengine.instagram.email.util.MailValidator;
 import com.itengine.instagram.security.jwt.JwtService;
 import com.itengine.instagram.user.model.User;
 import com.itengine.instagram.user.service.UserService;
-import com.itengine.instagram.util.CredentialRegex;
 import com.itengine.instagram.util.CredentialValidation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthService.class);
+
     public AuthService(UserService userService, JwtService jwtService, PasswordEncoder passwordEncoder, EmailService emailService) {
         this.userService = userService;
         this.jwtService = jwtService;
@@ -31,17 +35,11 @@ public class AuthService {
 
     public RegistrationResponseDto register(RegistrationRequestDto registrationRequestDto) {
 
-        if (!CredentialValidation.isPatternMatched(CredentialRegex.PASSWORD_REGEX, registrationRequestDto.getPassword())) {
-            return new RegistrationResponseDto(RegistrationResult.INVALID_PASSWORD);
-        }
+        CredentialValidation.validatePasswordFormat(registrationRequestDto.getPassword());
 
-        if (!CredentialValidation.isPatternMatched(CredentialRegex.USERNAME_REGEX, registrationRequestDto.getUsername())) {
-            return new RegistrationResponseDto(RegistrationResult.INVALID_USERNAME);
-        }
+        CredentialValidation.validateUsernameFormat(registrationRequestDto.getUsername());
 
-        if (!MailValidator.isValid(registrationRequestDto.getEmail())) {
-            return new RegistrationResponseDto(RegistrationResult.INVALID_EMAIL);
-        }
+        MailValidator.validateEmail(registrationRequestDto.getEmail());
 
         if (userService.existsByUsername(registrationRequestDto.getUsername())) {
             return new RegistrationResponseDto(RegistrationResult.UNAVAILABLE_USERNAME);
@@ -78,16 +76,20 @@ public class AuthService {
     }
 
     public String login(LoginDto loginDto) {
-        if (!userService.isActive(loginDto.getUsername())) {
+
+        String username = loginDto.getUsername();
+
+        if (!userService.isActive(username)) {
+            LOGGER.warn("User " + username + " login failed, inactive user");
             return null;
         }
 
-        if (!areCredentialsValid(loginDto.getUsername(), loginDto.getPassword())) {
+        if (!areCredentialsValid(username, loginDto.getPassword())) {
             return null;
         }
 
-        User user = userService.findByUsername(loginDto.getUsername());
-        return jwtService.createToken(loginDto.getUsername(), user.getId());
+        User user = userService.findByUsername(username);
+        return jwtService.createToken(username, user.getId());
     }
 
     private boolean areCredentialsValid(String username, String password) {
@@ -101,31 +103,35 @@ public class AuthService {
     }
 
     public void sendResetPasswordMail(String email) {
-        if (!MailValidator.isValid(email)) {
+        MailValidator.validateEmail(email);
+
+        User user = userService.findByEmail(email);
+
+        if (user == null || !user.isActive()) {
+            LOGGER.warn("User is not active or doesn't exits by given email");
             return;
         }
+
         String token = jwtService.createToken(email);
         emailService.sendResetPasswordMail(email, token);
     }
 
-    public void resetPassword(ResetPasswordDto resetPasswordDto) {
+    public ResetPasswordResponseDto resetPassword(ResetPasswordDto resetPasswordDto) {
         if (!jwtService.isValid(resetPasswordDto.getToken())) {
-            return;
+            return new ResetPasswordResponseDto(ResetPasswordResult.INVALID_TOKEN);
         }
         String email = jwtService.getTokenSubject(resetPasswordDto.getToken());
         User user = userService.findByEmail(email);
 
-        if(!user.isActive()) {
-            return;
+        CredentialValidation.validatePasswordFormat(resetPasswordDto.getNewPassword());
+
+        if (!passwordEncoder.matches(resetPasswordDto.getOldPassword(), user.getPassword())) {
+            return new ResetPasswordResponseDto(ResetPasswordResult.OLD_PASSWORD_NOT_MATCHED);
         }
 
-        if(!CredentialValidation.isPatternMatched(CredentialRegex.PASSWORD_REGEX, resetPasswordDto.getNewPassword())) {
-            return;
-        }
+        user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
+        userService.saveUser(user);
 
-        if (passwordEncoder.matches(resetPasswordDto.getOldPassword(), user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
-            userService.saveUser(user);
-        }
+        return new ResetPasswordResponseDto(ResetPasswordResult.SUCCESS);
     }
 }

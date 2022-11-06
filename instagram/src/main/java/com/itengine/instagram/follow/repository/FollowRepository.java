@@ -23,5 +23,4 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
             "SELECT follow.followTo FROM follow " +
             "WHERE follow.followFrom = :userId)")
     List<Follow> findSuggestions(Long userId);
-
 }

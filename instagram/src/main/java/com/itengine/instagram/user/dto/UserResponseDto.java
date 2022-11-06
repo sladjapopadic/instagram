@@ -6,20 +6,11 @@ import java.util.List;
 
 public class UserResponseDto {
 
-    private byte[] image;
     private String username;
     private String description;
     private List<PostDto> posts;
     private int numberOfFollowers;
     private int numberOfFollowing;
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
 
     public String getUsername() {
         return username;

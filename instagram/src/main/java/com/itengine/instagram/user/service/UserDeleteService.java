@@ -6,7 +6,6 @@ import com.itengine.instagram.like.service.LikeService;
 import com.itengine.instagram.post.service.PostService;
 import com.itengine.instagram.user.repository.UserRepository;
 import com.itengine.instagram.user.util.LoggedUser;
-import org.apache.juli.logging.Log;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -30,7 +29,6 @@ public class UserDeleteService {
 
     @Transactional
     public void delete() {
-
         Long userId = LoggedUser.getId();
 
         likeService.delete(userId);

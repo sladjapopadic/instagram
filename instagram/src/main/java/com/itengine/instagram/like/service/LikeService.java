@@ -4,7 +4,6 @@ import com.itengine.instagram.like.model.Like;
 import com.itengine.instagram.like.repository.LikeRepository;
 import com.itengine.instagram.post.model.Post;
 import com.itengine.instagram.post.service.PostService;
-import com.itengine.instagram.user.service.UserService;
 import com.itengine.instagram.user.util.LoggedUser;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +19,13 @@ public class LikeService {
     }
 
     public void likePost(Long postId) {
-       Post post = postService.getById(postId);
-       Like like = new Like();
-       like.setPost(post);
-       like.setUser(LoggedUser.getUser());
-       likeRepository.save(like);
+        Post post = postService.getById(postId);
+
+        Like like = new Like();
+        like.setPost(post);
+        like.setUser(LoggedUser.getUser());
+
+        likeRepository.save(like);
     }
 
     public void delete(Long userId) {

@@ -1,7 +1,6 @@
 package com.itengine.instagram.post.controller;
 
 import com.itengine.instagram.post.dto.PostDto;
-import com.itengine.instagram.post.model.Post;
 import com.itengine.instagram.post.service.PostService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,6 @@ public class PostController {
 
     @PostMapping
     public ResponseEntity<Void> createPost(@RequestParam MultipartFile file, @RequestBody String caption) throws IOException {
-
         postService.createPost(file, caption);
 
         return new ResponseEntity<>(HttpStatus.OK);
