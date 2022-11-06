@@ -10,16 +10,6 @@ import java.util.List;
 @Component
 public class UserConverter {
 
-    public UserProfileDto convertToUserProfileDto(User user) {
-
-        UserProfileDto userProfileDto = new UserProfileDto();
-
-        userProfileDto.setUsername(user.getUsername());
-        userProfileDto.setImage(user.getImage());
-
-        return userProfileDto;
-    }
-
     public List<UserProfileDto> convertToUserProfileDtos(List<User> users) {
         List<UserProfileDto> userProfileDtos = new ArrayList<>();
 
@@ -28,5 +18,13 @@ public class UserConverter {
         }
 
         return userProfileDtos;
+    }
+
+    private UserProfileDto convertToUserProfileDto(User user) {
+        UserProfileDto userProfileDto = new UserProfileDto();
+
+        userProfileDto.setUsername(user.getUsername());
+
+        return userProfileDto;
     }
 }

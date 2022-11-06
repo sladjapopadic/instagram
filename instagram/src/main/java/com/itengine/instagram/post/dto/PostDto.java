@@ -8,8 +8,6 @@ public class PostDto {
 
     private Long id;
     private String username;
-    private byte[] profileImage;
-    private byte[] image;
     private String caption;
     private List<CommentResponseDto> comments;
     private int likes;
@@ -28,22 +26,6 @@ public class PostDto {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public byte[] getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(byte[] profileImage) {
-        this.profileImage = profileImage;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
     }
 
     public String getCaption() {

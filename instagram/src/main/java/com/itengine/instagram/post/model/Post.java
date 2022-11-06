@@ -33,7 +33,7 @@ public class Post {
     @Column(name = "image", nullable = false)
     private byte[] image;
 
-    @Column(name = "created_at")
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
     public LocalDateTime getCreatedAt() {
@@ -70,10 +70,6 @@ public class Post {
 
     public List<Comment> getComments() {
         return comments;
-    }
-
-    public void setComments(List<Comment> comments) {
-        this.comments = comments;
     }
 
     public List<Like> getLikes() {

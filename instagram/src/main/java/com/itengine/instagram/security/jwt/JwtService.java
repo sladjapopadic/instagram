@@ -65,12 +65,16 @@ public class JwtService {
     }
 
     public String getTokenSubject(String token) {
-        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().getSubject();
+        return getClaims(token).getSubject();
     }
 
     public Long getTokenUserId(String token) {
-        Integer userId = (Integer) Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody().get(USER_ID_KEY);
+        Integer userId = (Integer) getClaims(token).get(USER_ID_KEY);
         return Long.valueOf(userId);
+    }
+
+    private Claims getClaims(String token) {
+        return Jwts.parser().setSigningKey(secretKey).parseClaimsJws(token).getBody();
     }
 
     public String resolveToken(HttpServletRequest req) {

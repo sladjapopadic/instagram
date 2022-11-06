@@ -8,5 +8,4 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Comment getById(Long id);
 
     void deleteByUserId(Long userId);
-
 }

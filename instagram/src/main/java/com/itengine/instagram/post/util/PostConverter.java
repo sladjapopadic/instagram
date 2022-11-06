@@ -19,13 +19,10 @@ public class PostConverter {
     }
 
     private PostDto convertToPostDto(Post post) {
-
         PostDto postDto = new PostDto();
 
         postDto.setId(post.getId());
         postDto.setUsername(post.getUser().getUsername());
-        postDto.setProfileImage(post.getUser().getImage());
-        postDto.setImage(post.getImage());
         postDto.setCaption(post.getCaption());
         postDto.setComments(commentConverter.convertToCommentDtos(post.getComments()));
         postDto.setLikes(post.getLikes().size());

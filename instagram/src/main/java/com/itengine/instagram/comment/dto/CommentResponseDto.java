@@ -5,7 +5,6 @@ import java.util.List;
 public class CommentResponseDto {
 
     private String username;
-    private byte[] profileImage;
     private String text;
     private List<CommentResponseDto> replies;
 
@@ -15,14 +14,6 @@ public class CommentResponseDto {
 
     public void setUsername(String username) {
         this.username = username;
-    }
-
-    public byte[] getProfileImage() {
-        return profileImage;
-    }
-
-    public void setProfileImage(byte[] profileImage) {
-        this.profileImage = profileImage;
     }
 
     public String getText() {

@@ -17,7 +17,6 @@ public class FollowService {
     }
 
     public void createFollow(User followFrom, User followTo) {
-
         if (!followRepository.existsByFollowFromAndFollowTo(followFrom, followTo)) {
             return;
         }

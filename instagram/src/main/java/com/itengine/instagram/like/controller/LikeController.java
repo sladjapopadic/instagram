@@ -1,6 +1,7 @@
 package com.itengine.instagram.like.controller;
 
 import com.itengine.instagram.like.service.LikeService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -20,6 +21,6 @@ public class LikeController {
     @PostMapping
     public ResponseEntity<Void> likePost(@RequestBody Long postId) {
         likeService.likePost(postId);
-        return null;
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
