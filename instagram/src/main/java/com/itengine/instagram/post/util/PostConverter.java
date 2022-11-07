@@ -1,8 +1,10 @@
 package com.itengine.instagram.post.util;
 
 import com.itengine.instagram.comment.util.CommentConverter;
+import com.itengine.instagram.like.model.Like;
 import com.itengine.instagram.post.dto.PostDto;
 import com.itengine.instagram.post.model.Post;
+import com.itengine.instagram.user.util.LoggedUser;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -26,6 +28,14 @@ public class PostConverter {
         postDto.setCaption(post.getCaption());
         postDto.setComments(commentConverter.convertToCommentDtos(post.getComments()));
         postDto.setLikes(post.getLikes().size());
+        postDto.setUserId(post.getUser().getId());
+
+        for (Like like : post.getLikes()) {
+            if (like.getUser().getId().equals(LoggedUser.getId())) {
+                postDto.setLiked(true);
+                break;
+            }
+        }
 
         return postDto;
     }

@@ -22,13 +22,17 @@ public class PostController {
 
     @GetMapping
     public ResponseEntity<List<PostDto>> getFollowedUsersPosts() {
-       return new ResponseEntity<>(postService.getFollowedUsersPosts(), HttpStatus.OK);
+        return new ResponseEntity<>(postService.getFollowedUsersPosts(), HttpStatus.OK);
     }
 
-    @PostMapping
-    public ResponseEntity<Void> createPost(@RequestParam MultipartFile file, @RequestBody String caption) throws IOException {
+    @RequestMapping(value = "", method = RequestMethod.POST, consumes = "multipart/form-data")
+    public ResponseEntity<Void> createPost(@RequestPart MultipartFile file, @RequestPart(required = false) String caption) throws IOException {
         postService.createPost(file, caption);
-
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/{postId}/image")
+    public ResponseEntity<byte[]> getPostImage(@PathVariable Long postId) {
+        return new ResponseEntity<>(postService.getPostImage(postId), HttpStatus.OK);
     }
 }

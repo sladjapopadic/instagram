@@ -21,7 +21,7 @@ public class EmailService {
         message.setFrom("noreply@fakeinstagram.com");
         message.setTo(registrationRequestDto.getEmail());
         message.setSubject("Confirm registration");
-        message.setText("To confirm the registration, follow the link:\n" + token);
+        message.setText("To confirm the registration, follow the link:\n" + "http://localhost:4200/public/confirm/" + token);
         javaMailSender.send(message);
     }
 
@@ -31,7 +31,7 @@ public class EmailService {
         message.setFrom("noreply@fakeinstagram.com");
         message.setTo(email);
         message.setSubject("Reset password");
-        message.setText("A request has been received to change the password for your fake instagram account.\n" + token);
+        message.setText("A request has been received to change the password for your fake instagram account.\n" + "http://localhost:4200/public/resetPassword/" + token);
         javaMailSender.send(message);
     }
 

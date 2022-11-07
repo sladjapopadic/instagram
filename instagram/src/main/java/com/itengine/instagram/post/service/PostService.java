@@ -56,4 +56,9 @@ public class PostService {
 
         postRepository.save(post);
     }
+
+    public byte[] getPostImage(Long postId) {
+        Post post = postRepository.getById(postId);
+        return post.getImage();
+    }
 }

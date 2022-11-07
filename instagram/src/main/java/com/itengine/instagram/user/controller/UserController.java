@@ -79,4 +79,9 @@ public class UserController {
         userService.updateProfileImage(file);
         return new ResponseEntity<>(HttpStatus.OK);
     }
+
+    @GetMapping("/{userId}/profileImage")
+    public ResponseEntity<byte[]> getProfileImage(@PathVariable Long userId) {
+        return new ResponseEntity<>(userService.getProfileImage(userId), HttpStatus.OK);
+    }
 }

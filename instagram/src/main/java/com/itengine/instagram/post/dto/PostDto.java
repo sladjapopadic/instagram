@@ -11,6 +11,24 @@ public class PostDto {
     private String caption;
     private List<CommentResponseDto> comments;
     private int likes;
+    private boolean liked;
+    private Long userId;
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
+    public boolean isLiked() {
+        return liked;
+    }
+
+    public void setLiked(boolean liked) {
+        this.liked = liked;
+    }
 
     public Long getId() {
         return id;

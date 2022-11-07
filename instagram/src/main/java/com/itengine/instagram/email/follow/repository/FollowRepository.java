@@ -1,6 +1,6 @@
-package com.itengine.instagram.follow.repository;
+package com.itengine.instagram.email.follow.repository;
 
-import com.itengine.instagram.follow.model.Follow;
+import com.itengine.instagram.email.follow.model.Follow;
 import com.itengine.instagram.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

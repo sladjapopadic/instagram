@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -17,7 +19,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<RegistrationResponseDto> register(@RequestBody RegistrationRequestDto registrationRequestDto) {
+    public ResponseEntity<RegistrationResponseDto> register(@RequestBody RegistrationRequestDto registrationRequestDto) throws IOException {
         return new ResponseEntity<>(authService.register(registrationRequestDto), HttpStatus.OK);
     }
 
@@ -27,8 +29,8 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginDto loginDto) {
-        return new ResponseEntity<>(authService.login(loginDto), HttpStatus.OK);
+    public ResponseEntity<LoginResponseDto> login(@RequestBody LoginRequestDto loginRequestDto) {
+        return new ResponseEntity<>(authService.login(loginRequestDto), HttpStatus.OK);
     }
 
     @PostMapping("/forgotPassword")
@@ -38,7 +40,7 @@ public class AuthController {
     }
 
     @PostMapping("/resetPassword")
-    public ResponseEntity<ResetPasswordResponseDto> resetPassword(@RequestBody ResetPasswordDto resetPasswordDto) {
-        return new ResponseEntity<>(authService.resetPassword(resetPasswordDto), HttpStatus.OK);
+    public ResponseEntity<ResetPasswordResponseDto> resetPassword(@RequestBody ResetPasswordRequestDto resetPasswordRequestDto) {
+        return new ResponseEntity<>(authService.resetPassword(resetPasswordRequestDto), HttpStatus.OK);
     }
 }
