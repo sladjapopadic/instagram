@@ -1,7 +1,7 @@
-package com.itengine.instagram.email.follow.service;
+package com.itengine.instagram.follow.service;
 
-import com.itengine.instagram.email.follow.model.Follow;
-import com.itengine.instagram.email.follow.repository.FollowRepository;
+import com.itengine.instagram.follow.model.Follow;
+import com.itengine.instagram.follow.repository.FollowRepository;
 import com.itengine.instagram.user.model.User;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +17,7 @@ public class FollowService {
     }
 
     public void createFollow(User followFrom, User followTo) {
-        if (!followRepository.existsByFollowFromAndFollowTo(followFrom, followTo)) {
+        if (followRepository.existsByFollowFromAndFollowTo(followFrom, followTo)) {
             return;
         }
 

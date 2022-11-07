@@ -9,8 +9,8 @@ public class UserResponseDto {
     private String username;
     private String description;
     private List<PostDto> posts;
-    private int numberOfFollowers;
-    private int numberOfFollowing;
+    private List<UserProfileDto> followers;
+    private List<UserProfileDto> following;
 
     public String getUsername() {
         return username;
@@ -36,19 +36,19 @@ public class UserResponseDto {
         this.posts = posts;
     }
 
-    public int getNumberOfFollowers() {
-        return numberOfFollowers;
+    public List<UserProfileDto> getFollowers() {
+        return followers;
     }
 
-    public void setNumberOfFollowers(int numberOfFollowers) {
-        this.numberOfFollowers = numberOfFollowers;
+    public void setFollowers(List<UserProfileDto> followers) {
+        this.followers = followers;
     }
 
-    public int getNumberOfFollowing() {
-        return numberOfFollowing;
+    public List<UserProfileDto> getFollowing() {
+        return following;
     }
 
-    public void setNumberOfFollowing(int numberOfFollowing) {
-        this.numberOfFollowing = numberOfFollowing;
+    public void setFollowing(List<UserProfileDto> following) {
+        this.following = following;
     }
 }

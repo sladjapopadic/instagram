@@ -1,14 +1,15 @@
 package com.itengine.instagram.user.service;
 
 import com.itengine.instagram.auth.dto.RegistrationRequestDto;
-import com.itengine.instagram.email.follow.model.Follow;
-import com.itengine.instagram.email.follow.service.FollowService;
 import com.itengine.instagram.email.util.MailValidator;
 import com.itengine.instagram.exception.ValidationException;
+import com.itengine.instagram.follow.model.Follow;
+import com.itengine.instagram.follow.service.FollowService;
 import com.itengine.instagram.post.util.PostConverter;
+import com.itengine.instagram.user.dto.UpdateResultDto;
 import com.itengine.instagram.user.dto.UserProfileDto;
 import com.itengine.instagram.user.dto.UserResponseDto;
-import com.itengine.instagram.user.dto.UserUpdateDto;
+import com.itengine.instagram.user.enums.UpdateResult;
 import com.itengine.instagram.user.model.User;
 import com.itengine.instagram.user.repository.UserRepository;
 import com.itengine.instagram.user.util.LoggedUser;
@@ -90,23 +91,6 @@ public class UserService implements UserDetailsService {
         return userRepository.findByUsernameIgnoreCase(username);
     }
 
-    public void updateAccount(UserUpdateDto userUpdateDto) {
-
-        MailValidator.validateEmail(userUpdateDto.getEmail());
-
-        CredentialValidation.validateUsernameFormat(userUpdateDto.getUsername());
-
-        CredentialValidation.validatePasswordFormat(userUpdateDto.getPassword());
-
-        String username = LoggedUser.getUsername();
-        User user = userRepository.findByUsernameIgnoreCase(username);
-        user.setEmail(userUpdateDto.getEmail());
-        user.setUsername(userUpdateDto.getUsername());
-        user.setPassword(passwordEncoder.encode(userUpdateDto.getPassword()));
-
-        userRepository.save(user);
-    }
-
     public List<User> getFollowedUsers(Long userId) {
         User user = userRepository.getById(userId);
 
@@ -129,8 +113,9 @@ public class UserService implements UserDetailsService {
         userResponseDto.setUsername(user.getUsername());
         userResponseDto.setDescription(user.getDescription());
         userResponseDto.setPosts(postConverter.convertToSortedPostDtos(user.getPosts()));
-        userResponseDto.setNumberOfFollowing(user.getFollowing().size());
-        userResponseDto.setNumberOfFollowers(user.getFollowers().size());
+
+        userResponseDto.setFollowing(getFollowedDtoUsers(userId));
+        userResponseDto.setFollowers(getFollowers(userId));
 
         return userResponseDto;
     }
@@ -187,5 +172,44 @@ public class UserService implements UserDetailsService {
     public byte[] getProfileImage(Long userId) {
         User user = userRepository.getById(userId);
         return user.getImage();
+    }
+
+    public UpdateResultDto updateUsername(String username) {
+
+        CredentialValidation.validateUsernameFormat(username);
+
+        if (userRepository.existsByUsernameIgnoreCase(username)) {
+            return new UpdateResultDto(UpdateResult.UNAVAILABLE_USERNAME);
+        }
+        User user = userRepository.getById(LoggedUser.getId());
+        user.setUsername(username);
+        userRepository.save(user);
+
+        return new UpdateResultDto(UpdateResult.SUCCESS);
+    }
+
+    public UpdateResultDto updateEmail(String email) {
+
+        MailValidator.validateEmail(email);
+
+        if (userRepository.existsByEmailIgnoreCase(email)) {
+            return new UpdateResultDto(UpdateResult.UNAVAILABLE_EMAIL);
+        }
+
+        User user = userRepository.getById(LoggedUser.getId());
+        user.setEmail(email);
+        userRepository.save(user);
+
+        return new UpdateResultDto(UpdateResult.SUCCESS);
+    }
+
+    public UpdateResultDto updatePassword(String password) {
+
+        CredentialValidation.validatePasswordFormat(password);
+        User user = userRepository.getById(LoggedUser.getId());
+        user.setEmail(passwordEncoder.encode(password));
+        userRepository.save(user);
+
+        return new UpdateResultDto(UpdateResult.SUCCESS);
     }
 }
