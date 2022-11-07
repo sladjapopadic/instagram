@@ -1,4 +1,4 @@
-package com.itengine.instagram.email.follow.model;
+package com.itengine.instagram.follow.model;
 
 import com.itengine.instagram.user.model.User;
 

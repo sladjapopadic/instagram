@@ -1,8 +1,8 @@
 package com.itengine.instagram.user.controller;
 
+import com.itengine.instagram.user.dto.UpdateResultDto;
 import com.itengine.instagram.user.dto.UserProfileDto;
 import com.itengine.instagram.user.dto.UserResponseDto;
-import com.itengine.instagram.user.dto.UserUpdateDto;
 import com.itengine.instagram.user.service.UserDeleteService;
 import com.itengine.instagram.user.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -25,10 +25,19 @@ public class UserController {
         this.userDeleteService = userDeleteService;
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<Void> updateAccount(@RequestBody UserUpdateDto userUpdateDto) {
-        userService.updateAccount(userUpdateDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+    @PatchMapping("/updateUsername")
+    public ResponseEntity<UpdateResultDto> updateUsername(@RequestBody String username) {
+        return new ResponseEntity<>(userService.updateUsername(username), HttpStatus.OK);
+    }
+
+    @PatchMapping("/updateEmail")
+    public ResponseEntity<UpdateResultDto> updateEmail(@RequestBody String email) {
+        return new ResponseEntity<>(userService.updateEmail(email), HttpStatus.OK);
+    }
+
+    @PatchMapping("/updatePassword")
+    public ResponseEntity<UpdateResultDto> updatePassword(@RequestBody String password) {
+        return new ResponseEntity<>(userService.updatePassword(password), HttpStatus.OK);
     }
 
     @DeleteMapping("/delete")

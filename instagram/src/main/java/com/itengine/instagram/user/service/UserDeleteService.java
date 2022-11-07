@@ -1,7 +1,7 @@
 package com.itengine.instagram.user.service;
 
 import com.itengine.instagram.comment.service.CommentService;
-import com.itengine.instagram.email.follow.service.FollowService;
+import com.itengine.instagram.follow.service.FollowService;
 import com.itengine.instagram.like.service.LikeService;
 import com.itengine.instagram.post.service.PostService;
 import com.itengine.instagram.user.repository.UserRepository;

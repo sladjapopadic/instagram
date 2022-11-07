@@ -24,6 +24,7 @@ public class UserConverter {
         UserProfileDto userProfileDto = new UserProfileDto();
 
         userProfileDto.setUsername(user.getUsername());
+        userProfileDto.setUserId(user.getId());
 
         return userProfileDto;
     }

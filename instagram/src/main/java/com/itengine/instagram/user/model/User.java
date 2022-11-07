@@ -1,6 +1,6 @@
 package com.itengine.instagram.user.model;
 
-import com.itengine.instagram.email.follow.model.Follow;
+import com.itengine.instagram.follow.model.Follow;
 import com.itengine.instagram.post.model.Post;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,10 +22,10 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Post> posts;
 
-    @OneToMany(mappedBy = "followFrom")
+    @OneToMany(mappedBy = "followTo")
     private List<Follow> followers;
 
-    @OneToMany(mappedBy = "followTo")
+    @OneToMany(mappedBy = "followFrom")
     private List<Follow> following;
 
     @Column(name = "username", nullable = false, unique = true)
