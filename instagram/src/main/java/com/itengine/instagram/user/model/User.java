@@ -1,6 +1,6 @@
 package com.itengine.instagram.user.model;
 
-import com.itengine.instagram.follow.model.Follow;
+import com.itengine.instagram.email.follow.model.Follow;
 import com.itengine.instagram.post.model.Post;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -50,10 +50,11 @@ public class User implements UserDetails {
 
     }
 
-    public User(String username, String password, String email) {
+    public User(String username, String password, String email, byte[] image) {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.image = image;
     }
 
     @PrePersist

@@ -21,7 +21,12 @@ public class LikeService {
     public void likePost(Long postId) {
         Post post = postService.getById(postId);
 
+        if (likeRepository.existsByUserIdAndPostId(LoggedUser.getId(), postId)) {
+            return;
+        }
+
         Like like = new Like();
+
         like.setPost(post);
         like.setUser(LoggedUser.getUser());
 
@@ -30,5 +35,9 @@ public class LikeService {
 
     public void delete(Long userId) {
         likeRepository.deleteByUserId(userId);
+    }
+
+    public void unlikePost(Long postId) {
+        likeRepository.deleteByUserIdAndPostId(LoggedUser.getId(), postId);
     }
 }

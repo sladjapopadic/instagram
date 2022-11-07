@@ -1,10 +1,10 @@
 package com.itengine.instagram.user.service;
 
 import com.itengine.instagram.auth.dto.RegistrationRequestDto;
+import com.itengine.instagram.email.follow.model.Follow;
+import com.itengine.instagram.email.follow.service.FollowService;
 import com.itengine.instagram.email.util.MailValidator;
 import com.itengine.instagram.exception.ValidationException;
-import com.itengine.instagram.follow.model.Follow;
-import com.itengine.instagram.follow.service.FollowService;
 import com.itengine.instagram.post.util.PostConverter;
 import com.itengine.instagram.user.dto.UserProfileDto;
 import com.itengine.instagram.user.dto.UserResponseDto;
@@ -14,6 +14,7 @@ import com.itengine.instagram.user.repository.UserRepository;
 import com.itengine.instagram.user.util.LoggedUser;
 import com.itengine.instagram.user.util.UserConverter;
 import com.itengine.instagram.util.CredentialValidation;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +22,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -49,8 +52,10 @@ public class UserService implements UserDetailsService {
         return findByUsername(username);
     }
 
-    public void create(RegistrationRequestDto registrationRequestDto) {
-        User user = new User(registrationRequestDto.getUsername(), passwordEncoder.encode(registrationRequestDto.getPassword()), registrationRequestDto.getEmail());
+    public void create(RegistrationRequestDto registrationRequestDto) throws IOException {
+        File file = new ClassPathResource("instagram_user.png").getFile();
+        byte[] defaultImage = Files.readAllBytes(file.toPath());
+        User user = new User(registrationRequestDto.getUsername(), passwordEncoder.encode(registrationRequestDto.getPassword()), registrationRequestDto.getEmail(), defaultImage);
         userRepository.save(user);
     }
 
@@ -177,5 +182,10 @@ public class UserService implements UserDetailsService {
         user.setImage(file.getBytes());
 
         userRepository.save(user);
+    }
+
+    public byte[] getProfileImage(Long userId) {
+        User user = userRepository.getById(userId);
+        return user.getImage();
     }
 }

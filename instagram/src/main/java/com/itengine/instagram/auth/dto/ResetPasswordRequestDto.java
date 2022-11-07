@@ -1,6 +1,6 @@
 package com.itengine.instagram.auth.dto;
 
-public class ResetPasswordDto {
+public class ResetPasswordRequestDto {
 
     private String oldPassword;
     private String newPassword;

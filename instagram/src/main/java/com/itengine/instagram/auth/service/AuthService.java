@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+
 @Service
 public class AuthService {
 
@@ -33,7 +35,7 @@ public class AuthService {
         this.emailService = emailService;
     }
 
-    public RegistrationResponseDto register(RegistrationRequestDto registrationRequestDto) {
+    public RegistrationResponseDto register(RegistrationRequestDto registrationRequestDto) throws IOException {
 
         CredentialValidation.validatePasswordFormat(registrationRequestDto.getPassword());
 
@@ -72,24 +74,31 @@ public class AuthService {
         }
 
         User user = userService.activate(confirmationRequestDto.getUsername());
-        return new ConfirmationResponseDto(ConfirmRegistrationResult.SUCCESS, jwtService.createToken(confirmationRequestDto.getUsername(), user.getId()));
+        String token = jwtService.createToken(confirmationRequestDto.getUsername(), user.getId());
+        return new ConfirmationResponseDto(ConfirmRegistrationResult.SUCCESS, token, user.getId());
     }
 
-    public String login(LoginDto loginDto) {
+    public LoginResponseDto login(LoginRequestDto loginRequestDto) {
 
-        String username = loginDto.getUsername();
+        String username = loginRequestDto.getUsername();
+
+        if (!userService.existsByUsername(loginRequestDto.getUsername())) {
+            return new LoginResponseDto();
+        }
 
         if (!userService.isActive(username)) {
             LOGGER.warn("User " + username + " login failed, inactive user");
-            return null;
+            return new LoginResponseDto();
         }
 
-        if (!areCredentialsValid(username, loginDto.getPassword())) {
-            return null;
+        if (!areCredentialsValid(username, loginRequestDto.getPassword())) {
+            return new LoginResponseDto();
         }
 
         User user = userService.findByUsername(username);
-        return jwtService.createToken(username, user.getId());
+        String token = jwtService.createToken(username, user.getId());
+
+        return new LoginResponseDto(token, user.getId());
     }
 
     private boolean areCredentialsValid(String username, String password) {
@@ -116,20 +125,20 @@ public class AuthService {
         emailService.sendResetPasswordMail(email, token);
     }
 
-    public ResetPasswordResponseDto resetPassword(ResetPasswordDto resetPasswordDto) {
-        if (!jwtService.isValid(resetPasswordDto.getToken())) {
+    public ResetPasswordResponseDto resetPassword(ResetPasswordRequestDto resetPasswordRequestDto) {
+        if (!jwtService.isValid(resetPasswordRequestDto.getToken())) {
             return new ResetPasswordResponseDto(ResetPasswordResult.INVALID_TOKEN);
         }
-        String email = jwtService.getTokenSubject(resetPasswordDto.getToken());
+        String email = jwtService.getTokenSubject(resetPasswordRequestDto.getToken());
         User user = userService.findByEmail(email);
 
-        CredentialValidation.validatePasswordFormat(resetPasswordDto.getNewPassword());
+        CredentialValidation.validatePasswordFormat(resetPasswordRequestDto.getNewPassword());
 
-        if (!passwordEncoder.matches(resetPasswordDto.getOldPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(resetPasswordRequestDto.getOldPassword(), user.getPassword())) {
             return new ResetPasswordResponseDto(ResetPasswordResult.OLD_PASSWORD_NOT_MATCHED);
         }
 
-        user.setPassword(passwordEncoder.encode(resetPasswordDto.getNewPassword()));
+        user.setPassword(passwordEncoder.encode(resetPasswordRequestDto.getNewPassword()));
         userService.saveUser(user);
 
         return new ResetPasswordResponseDto(ResetPasswordResult.SUCCESS);
