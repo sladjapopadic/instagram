@@ -5,7 +5,7 @@ import com.itengine.instagram.follow.service.FollowService;
 import com.itengine.instagram.like.service.LikeService;
 import com.itengine.instagram.post.service.PostService;
 import com.itengine.instagram.user.repository.UserRepository;
-import com.itengine.instagram.user.util.LoggedUser;
+import com.itengine.instagram.util.util.LoggedUser;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;

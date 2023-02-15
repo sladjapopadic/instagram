@@ -4,7 +4,7 @@ import com.itengine.instagram.comment.util.CommentConverter;
 import com.itengine.instagram.like.model.Like;
 import com.itengine.instagram.post.dto.PostDto;
 import com.itengine.instagram.post.model.Post;
-import com.itengine.instagram.user.util.LoggedUser;
+import com.itengine.instagram.util.util.LoggedUser;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;

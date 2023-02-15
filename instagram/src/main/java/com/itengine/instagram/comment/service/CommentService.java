@@ -6,7 +6,7 @@ import com.itengine.instagram.comment.model.Comment;
 import com.itengine.instagram.comment.repository.CommentRepository;
 import com.itengine.instagram.post.model.Post;
 import com.itengine.instagram.post.service.PostService;
-import com.itengine.instagram.user.util.LoggedUser;
+import com.itengine.instagram.util.util.LoggedUser;
 import org.springframework.stereotype.Service;
 
 @Service

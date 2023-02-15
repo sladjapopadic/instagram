@@ -1,4 +1,4 @@
-package com.itengine.instagram.user.util;
+package com.itengine.instagram.util.util;
 
 import com.itengine.instagram.user.dto.UserProfileDto;
 import com.itengine.instagram.user.model.User;

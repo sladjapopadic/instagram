@@ -6,7 +6,7 @@ import com.itengine.instagram.post.repository.PostRepository;
 import com.itengine.instagram.post.util.PostConverter;
 import com.itengine.instagram.user.model.User;
 import com.itengine.instagram.user.service.UserService;
-import com.itengine.instagram.user.util.LoggedUser;
+import com.itengine.instagram.util.util.LoggedUser;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
