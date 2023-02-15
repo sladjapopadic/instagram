@@ -5,6 +5,7 @@ import com.itengine.instagram.email.util.MailValidator;
 import com.itengine.instagram.exception.ValidationException;
 import com.itengine.instagram.follow.model.Follow;
 import com.itengine.instagram.follow.service.FollowService;
+import com.itengine.instagram.image.ImageService;
 import com.itengine.instagram.post.util.PostConverter;
 import com.itengine.instagram.user.dto.UpdateResultDto;
 import com.itengine.instagram.user.dto.UserProfileDto;
@@ -15,7 +16,6 @@ import com.itengine.instagram.user.repository.UserRepository;
 import com.itengine.instagram.util.CredentialValidation;
 import com.itengine.instagram.util.util.LoggedUser;
 import com.itengine.instagram.util.util.UserConverter;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -23,9 +23,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -39,13 +37,15 @@ public class UserService implements UserDetailsService {
     private final PostConverter postConverter;
     private final UserConverter userConverter;
     private final FollowService followService;
+    private final ImageService imageService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, PostConverter postConverter, UserConverter userConverter, FollowService followService) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, PostConverter postConverter, UserConverter userConverter, FollowService followService, ImageService imageService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.postConverter = postConverter;
         this.userConverter = userConverter;
         this.followService = followService;
+        this.imageService = imageService;
     }
 
     @Override
@@ -54,8 +54,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void create(RegistrationRequestDto registrationRequestDto) throws IOException {
-        File file = new ClassPathResource("instagram_user.png").getFile();
-        byte[] defaultImage = Files.readAllBytes(file.toPath());
+        byte[] defaultImage = imageService.getDefaultProfileImage();
         User user = new User(registrationRequestDto.getUsername(), passwordEncoder.encode(registrationRequestDto.getPassword()), registrationRequestDto.getEmail(), defaultImage);
         userRepository.save(user);
     }
